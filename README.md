@@ -14,3 +14,7 @@ them with the tags defined by the recruiter.
 If all are found, the candidate is marked as suitable to continue in the recruitment process. 
 The recruiter should be able to see on screen the list of candidates who are 
 suitable, indicating name, surname, email, phone, and location.
+
+ESQUEMA DE BASE DE DATOS
+
+<img width="1127" height="713" alt="image" src="https://github.com/user-attachments/assets/9b7bd5a4-d557-4897-b7e9-4de1cbc6e641" />
