@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Sequence
+
 
 db = SQLAlchemy()
 
-class CV(db.model):
+class CV(db.Model):
     __tablename__ = 'cv'
 
     id = db.Column(db.Integer, Sequence('cv_id_seq'), primary_key=True)
@@ -52,8 +54,8 @@ class Oferta(db.Model):
 
     __tablename__ = 'oferta'
 
-    id = db.Column(db.Integer, Sequence('oferta_id_seq'), primary_key=True)
-    puesto = db.Column(db.String(12), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    puesto = db.Column(db.Text, nullable=False)
     etiquetas = db.Column(db.Text)
     id_reclutador = db.Column(db.Integer, db.ForeignKey('reclutador.id'))
 
@@ -76,9 +78,9 @@ class Reclutador(db.Model):
     __tablename__ = 'reclutador'
 
     # Columnas de la tabla
-    id = db.Column(db.Integer, Sequence('reclutador'), primary_key=True)
-    nombre = db.Column(db.String(12), nullable=False)
-    oferta = db.Column(db.Integer, db.ForeignKey('oferta.id'))
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    nombre = db.Column(db.Text , nullable=False)
+    email = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
         return f'<reclutador id={self.id} nombre={self.nombre}>'
@@ -87,8 +89,7 @@ class Reclutador(db.Model):
 
         return {
             'id': self.id,
-            'nombre': self.nombre,
-            'oferta': self.oferta
+            'nombre': self.nombre
         }
 
 class Candidatos_oferta(db.Model):
