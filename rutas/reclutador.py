@@ -54,10 +54,40 @@ def add_reclutador():
             'email': new_reclutador.email
         })
     except ValueError as e:
+        db.session.rollback()
         return jsonify({'Error': str(e)})
 
+@reclutador_bp.route('/modify', methods=['PUT'])
+def modify():
+    data = request.get_json()
+    id = data.get('id')
+    nombre = data.get('nombre')
+    email = data.get('email')
+
+    if not id or not nombre or not email:
+        return jsonify({'error': 'Todos los campos deben estar completo'}), 400
+
+    reclutador_existente = Reclutador.query.filter_by(email=email).first()
+
+    if reclutador_existente:
+        return jsonify({'Error':'El campo email ya esta ocupado'}), 400
+
+    reclutador_db = Reclutador.query.get(id)
+
+    if not reclutador_db:
+        return jsonify({'Error':'No existe reclutador indicado'}), 404
+    try:
+        reclutador_db.nombre = nombre
+        reclutador_db.email = email
+        db.session.commit()
+        return jsonify({'Data':'Se actualizo reclutador'}), 201
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({'Error': str(e)})
+
+
 @reclutador_bp.route('/delete/id', methods=['DELETE'])
-def delete_reclutador_id():
+def delete_by_id():
     data = request.get_json()
     id = data.get('id')
 
@@ -74,6 +104,7 @@ def delete_reclutador_id():
         db.session.commit()
         return jsonify({'data':'se elimino al reclutador'}), 200
     except ValueError as e:
+        db.session.rollback()
         return jsonify({'Error': str(e)})
 
 

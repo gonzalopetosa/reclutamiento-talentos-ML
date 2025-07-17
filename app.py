@@ -12,9 +12,10 @@ db.init_app(app)
 
 from rutas.oferta import oferta_bp
 from rutas.reclutador import reclutador_bp
+from rutas.candidato_apto import candidato_apto_bp
 
 app.register_blueprint(oferta_bp, url_prefix='/oferta')
 app.register_blueprint(reclutador_bp, url_prefix='/reclutador')
-
+app.register_blueprint(candidato_apto_bp, url_prefix='/candidatos_aptos')
 if __name__== '__main__':
     app.run(port=int(os.environ.get("FLASK_PORT", 5000)))

@@ -88,7 +88,7 @@ def modify():
     puesto = data.get('puesto')
     etiquetas = data.get('etiquetas')
 
-    if not id_reclutador_db or not puesto or not etiquetas:
+    if not id_reclutador_db or not puesto or not etiquetas or not id_oferta_db:
         return jsonify({'Error': 'Uno de los campos no estan completos'}), 400
 
     oferta_db = Oferta.query.get(id_oferta_db)
@@ -117,6 +117,30 @@ def modify():
     except ValueError as e:
         db.session.rollback()
         return jsonify( {'Error': str(e) }), 400
+
+@oferta_bp.route('/delete/id', methods=['DELETE'])
+def delete_by_id():
+    data = request.get_json()
+    id = data.get('id')
+
+    if not id:
+        return jsonify({'Error': 'Debes ingresar el campo ID'}), 400
+
+    oferta_db = Oferta.query.get(id)
+
+    if not oferta_db:
+        return jsonify({
+        'Error':'No existe oferta'
+        }) , 404
+
+    try:
+        db.session.delete(oferta_db)
+        db.session.commit()
+        return jsonify({'data':'se elimino al reclutador'}), 200
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify( {'Error': str(e) }), 400
+
 
 
 

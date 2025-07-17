@@ -7,7 +7,7 @@ db = SQLAlchemy()
 class CV(db.Model):
     __tablename__ = 'cv'
 
-    id = db.Column(db.Integer, Sequence('cv_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     path = db.Column(db.Text, nullable=False)
     text = db.Column(db.Text, nullable=False)
     frecuent_words = db.Column(db.Text, nullable=False)
@@ -26,9 +26,9 @@ class CV(db.Model):
 
 class Candidato_apto(db.Model):
 
-    __tablename__ = 'candidato_apto'
+    __tablename__ = 'candidatos_aptos'
 
-    id = db.Column(db.Integer, Sequence('candidato_apto_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.Text, nullable=False)
     apellido = db.Column(db.Text, nullable=False)
     telefono = db.Column(db.String(20), nullable=False)
