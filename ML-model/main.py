@@ -8,10 +8,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import re
 import joblib
 
-ruta = Path('Curriculum-Vitae.csv').resolve()
+ruta = Path('CV_Ofertas_Dataset.csv').resolve()
 
 df = pd.read_csv(ruta)
 
+data = df['CV'] + " " + df['Oferta']
+apto = df['Apto']
 
 def normalizar_texto (texto):
     texto = str( texto ).lower()
@@ -21,12 +23,11 @@ def normalizar_texto (texto):
     texto= re.sub(r'[â¢]', '', texto)
     return texto
 
-puesto = df['Category'].apply(normalizar_texto)
-informacion = df['Resume'].apply(normalizar_texto)
+data = data.apply(normalizar_texto)
 
-x_train, x_test, y_train, y_test = train_test_split(informacion, puesto, test_size=0.2, random_state=42, stratify = puesto)
+x_train, x_test, y_train, y_test = train_test_split(data, apto, test_size=0.2, random_state=42, stratify = apto)
 
-vectorizador = TfidfVectorizer( max_features=5000 ,min_df=2 , max_df= 0.8)
+vectorizador = TfidfVectorizer( max_features=5000 ,min_df=2 , max_df= 0.8, stop_words='english', ngram_range=(1, 2))
 
 X_train_vectorized = vectorizador.fit_transform(x_train)
 X_test_vectorized = vectorizador.transform(x_test)
@@ -35,6 +36,9 @@ modelo_lr = LogisticRegression(max_iter=1000)
 modelo_lr.fit(X_train_vectorized, y_train)
 
 y_pred = modelo_lr.predict(X_test_vectorized)
+
+
+print(classification_report(y_test, y_pred))
 
 joblib.dump( {'modelo': modelo_lr,
             'vectorizador': vectorizador},
