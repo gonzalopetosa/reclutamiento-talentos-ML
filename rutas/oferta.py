@@ -11,7 +11,8 @@ def obtener_ofertar():
     return jsonify([{
         'id':Oferta.id,
         'puesto':Oferta.puesto,
-        'etiquetas':Oferta.etiquetas
+        'etiquetas':Oferta.etiquetas,
+        'reclutador':Oferta.id_reclutador
     } for Oferta in ofertas])
 
 @oferta_bp.route('/get/id')
