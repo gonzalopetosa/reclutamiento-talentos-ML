@@ -1,6 +1,10 @@
 // Configuración de la API
 const API_BASE_URL = 'http://localhost:5000'; // Cambia esto por tu URL de API
 
+// Variables de estado global
+let createSubmitHandler = null;
+let currentEditId = null;
+
 // Función para mostrar vistas
 function showView(viewId) {
     // Ocultar todas las vistas
@@ -21,7 +25,7 @@ function showView(viewId) {
     if (viewId === 'offers-view') {
         buttons[1].classList.add('active');
     } else if (viewId === 'candidates-view') {
-        buttons[2].classList.add('active');
+        buttons[2].classlist.add('active');
     } else {
         buttons[0].classList.add('active');
     }
@@ -60,7 +64,7 @@ function loadOffers() {
                 // Mostrar mensaje si no hay ofertas
                 document.getElementById('offers-table-body').innerHTML = `
                     <tr>
-                        <td colspan="5" style="text-align: center;">No hay ofertas disponibles</td>
+                        <td colspan="4" style="text-align: center;">No hay ofertas disponibles</td>
                     </tr>
                 `;
                 document.getElementById('offers-table').style.display = 'table';
@@ -103,97 +107,100 @@ function showAddOfferForm() {
     document.getElementById('offers-table').style.display = 'none';
     document.getElementById('add-offer-form').style.display = 'block';
     document.getElementById('offer-form').reset();
+    
+    // Restablecer textos si estamos en modo creación
+    if (!currentEditId) {
+        document.querySelector('#add-offer-form h3').textContent = 'Agregar Nueva Oferta';
+        document.querySelector('#offer-form button[type="submit"]').textContent = 'Guardar Oferta';
+    }
 }
 
 // Función para cancelar la adición de oferta
 function cancelAddOffer() {
     document.getElementById('add-offer-form').style.display = 'none';
     document.getElementById('offers-table').style.display = 'table';
+    currentEditId = null;
+    setupCreateForm(); // Restaurar modo creación
 }
 
-// Función para manejar el envío del formulario
-document.getElementById('offer-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+// Configurar el formulario para creación de ofertas
+function setupCreateForm() {
+    const form = document.getElementById('offer-form');
     
-    const newOffer = {
-        puesto: document.getElementById('offer-puesto').value,
-        etiquetas: document.getElementById('offer-etiquetas').value,
-        id_reclutador: document.getElementById('offer-reclutador').value,
-    };
+    // Eliminar cualquier manejador previo
+    form.onsubmit = null;
+    if (createSubmitHandler) {
+        form.removeEventListener('submit', createSubmitHandler);
+    }
     
-    // Enviar la nueva oferta a la API
-    fetch(`${API_BASE_URL}/oferta/add`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newOffer)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error al crear la oferta');
-        }
-        return response.json();
-    })
-    .then(() => {
-        alert('Oferta creada con éxito');
-        cancelAddOffer();
-        loadOffers();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al crear la oferta');
-    });
-});
-
-// Funciones para manejar acciones de ofertas
-function viewOffer(offerId) {
-    // Obtener detalles de la oferta
-    fetch(`${API_BASE_URL}/oferta/${offerId}`)
-        .then(response => response.json())
-        .then(offer => {
-            alert(`Detalles de la oferta:\nTítulo: ${offer.titulo}\nEmpresa: ${offer.empresa}\nUbicación: ${offer.ubicacion}\nSalario: ${offer.salario}`);
+    // Configurar nuevo manejador para creación
+    createSubmitHandler = function(e) {
+        e.preventDefault();
+        
+        const newOffer = {
+            puesto: document.getElementById('offer-puesto').value,
+            etiquetas: document.getElementById('offer-etiquetas').value,
+            id_reclutador: document.getElementById('offer-reclutador').value,
+        };
+        
+        fetch(`${API_BASE_URL}/oferta/add`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newOffer)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error al crear la oferta');
+            return response.json();
+        })
+        .then(() => {
+            alert('Oferta creada con éxito');
+            cancelAddOffer();
+            loadOffers();
         })
         .catch(error => {
-            console.error('Error al obtener detalles de la oferta:', error);
-            alert('Error al obtener detalles de la oferta');
+            console.error('Error:', error);
+            alert('Error al crear la oferta');
         });
+    };
+    
+    form.addEventListener('submit', createSubmitHandler);
+    currentEditId = null;
 }
 
+// Función para editar una oferta
 function editOffer(offerId) {
-    // Obtener datos de la oferta
-    fetch(`${API_BASE_URL}/oferta/${offerId}`)
+    currentEditId = offerId;
+    
+    fetch(`${API_BASE_URL}/oferta/get/${offerId}`)
         .then(response => response.json())
         .then(offer => {
-            // Rellenar formulario con datos existentes
-            document.getElementById('offer-title').value = offer.titulo;
-            document.getElementById('offer-company').value = offer.empresa;
-            document.getElementById('offer-location').value = offer.ubicacion;
-            document.getElementById('offer-salary').value = offer.salario;
-            document.getElementById('offer-description').value = offer.descripcion;
+            document.getElementById('offer-puesto').value = offer.puesto;
+            document.getElementById('offer-etiquetas').value = offer.etiquetas;
+            document.getElementById('offer-reclutador').value = offer.id_reclutador;
             
-            // Mostrar formulario
             showAddOfferForm();
-            
-            // Cambiar texto del botón
             document.querySelector('#add-offer-form h3').textContent = 'Editar Oferta';
             document.querySelector('#offer-form button[type="submit"]').textContent = 'Actualizar Oferta';
             
-            // Cambiar el evento del formulario para actualizar
             const form = document.getElementById('offer-form');
-            form.onsubmit = function(e) {
+            form.onsubmit = null;
+            if (createSubmitHandler) {
+                form.removeEventListener('submit', createSubmitHandler);
+            }
+            
+            form.addEventListener('submit', function editSubmitHandler(e) {
                 e.preventDefault();
                 
                 const updatedOffer = {
-                    titulo: document.getElementById('offer-title').value,
-                    empresa: document.getElementById('offer-company').value,
-                    ubicacion: document.getElementById('offer-location').value,
-                    salario: document.getElementById('offer-salary').value,
-                    descripcion: document.getElementById('offer-description').value
+                    id: currentEditId,
+                    puesto: document.getElementById('offer-puesto').value,
+                    etiquetas: document.getElementById('offer-etiquetas').value,
+                    id_reclutador: document.getElementById('offer-reclutador').value
                 };
                 
-                // Enviar actualización
-                fetch(`${API_BASE_URL}/oferta/${offerId}`, {
+                fetch(`${API_BASE_URL}/oferta/modify`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -201,53 +208,69 @@ function editOffer(offerId) {
                     body: JSON.stringify(updatedOffer)
                 })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al actualizar la oferta');
-                    }
+                    if (!response.ok) throw new Error('Error al actualizar');
                     return response.json();
                 })
                 .then(() => {
                     alert('Oferta actualizada con éxito');
                     cancelAddOffer();
                     loadOffers();
-                    // Restaurar formulario para crear nuevas ofertas
-                    form.onsubmit = arguments.callee;
+                    setupCreateForm(); // Restaurar modo creación
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al actualizar la oferta');
+                    alert(error.Error || 'Error al actualizar');
                 });
-            };
+            });
         })
         .catch(error => {
-            console.error('Error al obtener datos de la oferta:', error);
-            alert('Error al obtener datos de la oferta');
+            console.error('Error:', error);
+            alert('Error al obtener datos');
         });
 }
 
+// Función para eliminar una oferta
 function deleteOffer(offerId) {
     if (confirm('¿Estás seguro de que deseas eliminar esta oferta?')) {
-        fetch(`${API_BASE_URL}/oferta/${offerId}`, {
-            method: 'DELETE'
+        fetch(`${API_BASE_URL}/oferta/delete/id`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: offerId })
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Error al eliminar la oferta');
+                return response.json().then(err => { throw err; });
             }
             return response.json();
         })
-        .then(() => {
-            alert('Oferta eliminada con éxito');
+        .then(data => {
+            alert(data.data || 'Oferta eliminada con éxito');
             loadOffers();
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Error al eliminar la oferta');
+            alert(error.Error || 'Error al eliminar la oferta');
         });
     }
 }
 
-// Inicializar la vista de ofertas al cargar la página
+// Función para ver una oferta
+function viewOffer(offerId) {
+    fetch(`${API_BASE_URL}/oferta/get/${offerId}`)
+        .then(response => response.json())
+        .then(offer => {
+            alert(`Detalles de la oferta:\nPuesto: ${offer.puesto}\nEtiquetas: ${offer.etiquetas}\nReclutador: ${offer.id_reclutador}`);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al obtener detalles de la oferta');
+        });
+}
+
+// Inicialización
 document.addEventListener('DOMContentLoaded', function() {
+    setupCreateForm(); // Configurar formulario para creación por defecto
     showOffersView();
 });

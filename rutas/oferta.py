@@ -15,28 +15,16 @@ def obtener_ofertar():
         'reclutador':Oferta.id_reclutador
     } for Oferta in ofertas])
 
-@oferta_bp.route('/get/id')
-def get_by_id():
-    data = request.get_json()
-    id_oferta = data.get('id')
+@oferta_bp.route('/get/<int:id>')
+def get_by_id(id):
 
-    if not id_oferta:
-        return jsonify({
-        'Error':'El campo id no fue completado'
-        }) , 400
+    oferta_db = Oferta.query.get_or_404(id)
 
-    oferta_db = Oferta.query.get(id_oferta)
-
-    if not oferta_db:
-        return jsonify({
-        'Error':'No existe oferta'
-        }) , 404
-    else:
-        return jsonify({
-            'puesto': oferta_db.puesto,
-            'etiquetas': oferta_db.etiquetas,
-            'reclurado_asociado': oferta_db.id_reclutador
-        }), 200
+    return jsonify({
+        'puesto': oferta_db.puesto,
+        'etiquetas': oferta_db.etiquetas,
+        'id_reclutador': oferta_db.id_reclutador
+    })
 
 
 @oferta_bp.route('/add', methods=['POST'])
