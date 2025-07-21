@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
 from modelos.models import db, Reclutador
+import hashlib
+
 
 reclutador_bp = Blueprint('reclutador', __name__)
 
@@ -37,15 +39,22 @@ def get_by_email():
 @reclutador_bp.route('/add', methods=['POST'])
 def add_reclutador():
 
-    email = request.json['email']
+    data = request.get_json()
+    email = data.get("email")
+    nombre = data.get('nombre')
+    contraseña = data.get('contraseña')
+
+    if not id or not nombre or not email or not contraseña:
+        return jsonify({'error': 'Todos los campos deben estar completo'}), 400
+
     reclutador_existente = Reclutador.query.filter_by(email=email).first()
 
     if reclutador_existente:
         return jsonify({'Error':'The email to recruiter are used'}), 400
 
     try:
-        new_reclutador = Reclutador(nombre = request.json['nombre'], email = request.json['email'])
-
+        hash_password = hashlib.sha256(contraseña.encode('utf-8')).hexdigest()
+        new_reclutador = Reclutador(nombre = request.json['nombre'], email = request.json['email'], contraseña = hash_password)
         db.session.add(new_reclutador)
         db.session.commit()
         return jsonify({
@@ -63,8 +72,9 @@ def modify():
     id = data.get('id')
     nombre = data.get('nombre')
     email = data.get('email')
+    contraseña = data.get('contraseña')
 
-    if not id or not nombre or not email:
+    if not id or not nombre or not email or not contraseña:
         return jsonify({'error': 'Todos los campos deben estar completo'}), 400
 
     reclutador_existente = Reclutador.query.filter_by(email=email).first()
@@ -79,6 +89,7 @@ def modify():
     try:
         reclutador_db.nombre = nombre
         reclutador_db.email = email
+        reclutador_db.contraseña = contraseña
         db.session.commit()
         return jsonify({'Data':'Se actualizo reclutador'}), 201
     except ValueError as e:
