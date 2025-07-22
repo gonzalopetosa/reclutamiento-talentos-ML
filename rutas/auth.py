@@ -9,7 +9,7 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/reclutador/login', methods=['POST'])
 def reclutador_login():
-    data = request.get_json()
+    data = request.get_json(force=True)
     email = data.get('email')
     contraseña = data.get('contraseña')
 

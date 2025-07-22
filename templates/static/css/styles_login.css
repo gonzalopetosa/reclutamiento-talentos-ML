@@ -1,0 +1,328 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: url('https://img.freepik.com/fotos-premium/fondo-borroso-abstracto-colorido_692652-1039.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-container {
+    background-color: rgba(255, 255, 255, 0.92);
+    border-radius: 15px;
+    width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+.header {
+    background: linear-gradient(135deg, #4a6bff, #6a11cb);
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.header p {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.tabs {
+    display: flex;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-btn.active {
+    color: #4a6bff;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #4a6bff;
+}
+
+.form-container {
+    padding: 30px;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 15px 14px 45px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #4a6bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.2);
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    bottom: 14px;
+    color: #777;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #4a6bff, #6a11cb);
+    color: white;
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 10px rgba(74, 107, 255, 0.3);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(74, 107, 255, 0.4);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.forgot-password {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #4a6bff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.social-login {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.social-text {
+    position: relative;
+    margin-bottom: 20px;
+    color: #777;
+    font-size: 14px;
+}
+
+.social-text::before, .social-text::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: #ddd;
+}
+
+.social-text::before {
+    left: 0;
+}
+
+.social-text::after {
+    right: 0;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7ff;
+    color: #555;
+    font-size: 18px;
+    transition: all 0.3s;
+    border: 1px solid #eee;
+}
+
+.social-icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.social-icon.facebook:hover {
+    background: #3b5998;
+    color: white;
+}
+
+.social-icon.google:hover {
+    background: #dd4b39;
+    color: white;
+}
+
+.social-icon.twitter:hover {
+    background: #1da1f2;
+    color: white;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+    color: #555;
+}
+
+.register-link a {
+    color: #4a6bff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.signup-content .input-group {
+    margin-bottom: 15px;
+}
+
+.password-info {
+    font-size: 12px;
+    color: #777;
+    margin-top: 5px;
+}
+
+.terms {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.terms input {
+    margin-top: 5px;
+    margin-right: 10px;
+}
+
+.terms label {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.terms label a {
+    color: #4a6bff;
+    text-decoration: none;
+}
+
+/* Alertas personalizadas */
+.custom-alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    padding: 15px 30px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    z-index: 1000;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-alert.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.custom-alert.success {
+    background-color: #28a745;
+    border-left: 5px solid #218838;
+}
+
+.custom-alert.error {
+    background-color: #dc3545;
+    border-left: 5px solid #bd2130;
+}
+
+.custom-alert.warning {
+    background-color: #ffc107;
+    border-left: 5px solid #e0a800;
+    color: #333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        width: 100%;
+    }
+}
