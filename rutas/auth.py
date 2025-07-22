@@ -3,6 +3,7 @@ from modelos.models import db, Reclutador
 import hashlib
 from services.Security import Security
 
+
 auth_bp = Blueprint('auth', __name__)
 
 

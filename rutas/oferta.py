@@ -1,19 +1,24 @@
 from flask import Blueprint, request, jsonify
 from modelos.models import db, Oferta, Reclutador
+from services.Security import Security
+
 
 oferta_bp = Blueprint('oferta', __name__)
 
 @oferta_bp.route('/all')
 def obtener_ofertar():
-
+    has_access = Security.validate_token(request.headers)
     ofertas = Oferta.query.all()
 
-    return jsonify([{
-        'id':Oferta.id,
-        'puesto':Oferta.puesto,
-        'etiquetas':Oferta.etiquetas,
-        'reclutador':Oferta.id_reclutador
-    } for Oferta in ofertas])
+    if has_access:
+        return jsonify([{
+            'id':Oferta.id,
+            'puesto':Oferta.puesto,
+            'etiquetas':Oferta.etiquetas,
+            'reclutador':Oferta.id_reclutador
+        } for Oferta in ofertas])
+    else:
+        return jsonify({'message': 'Unauthorized'}), 401
 
 @oferta_bp.route('/get/<int:id>')
 def get_by_id(id):
