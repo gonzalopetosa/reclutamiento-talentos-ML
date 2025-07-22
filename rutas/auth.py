@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from modelos.models import db, Reclutador
 import hashlib
 from services.Security import Security
@@ -25,9 +25,24 @@ def reclutador_login():
     if hash_password == reclutador_existente.contraseña:
         try:
             token = Security.generate_token(reclutador_existente)
-            return jsonify({
-                    'id_reclutador':reclutador_existente.id,
-                    'Token': token}), 200
+
+            response = jsonify({
+                'success': True,
+                'reclutador_id': reclutador_existente.id,
+                'reclutador_nombre': reclutador_existente.nombre
+            })
+
+            response.set_cookie(
+                'token',
+                token,
+                max_age=Security.expiration_time,
+                httponly=True,
+                secure=False,
+                samesite='Lax'
+            )
+
+            return response, 200
+
         except ValueError as e:
             return jsonify({'Error': str(e) }), 401
     else:

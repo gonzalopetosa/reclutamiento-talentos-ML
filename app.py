@@ -1,4 +1,4 @@
-from flask import request, Flask, jsonify, render_template
+from flask import request, Flask, jsonify, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 import os
 from modelos.models import db
@@ -9,8 +9,11 @@ from rutas.candidato_apto import candidato_apto_bp
 from rutas.auth import auth_bp
 from dotenv import load_dotenv
 
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv('JWT_SECRET')
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False') == 'True'
@@ -26,6 +29,12 @@ app.register_blueprint(auth_bp, url_prefix="/auth")
 @app.route('/')
 def index():
     return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if 'token' not in session:
+        return redirect(url_for('/'))
+    return render_template('index.html')
 
 if __name__== '__main__':
     app.run(port=int(os.environ.get("FLASK_PORT", 5000)))

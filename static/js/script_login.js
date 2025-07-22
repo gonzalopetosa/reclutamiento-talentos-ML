@@ -49,10 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             if (response.ok) {
-                if (data.Token) {
-                    localStorage.setItem('authToken', data.Token);
-                    localStorage.setItem('reclutadorId', data['id reclutador']);
-                }
                 showAlert('¡Inicio de sesión exitoso! Redirigiendo...', 'success');
                 setTimeout(() => window.location.href = '/dashboard', 1500);
             } else {
@@ -84,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         try {
-            const response = await fetch(`${API_BASE_URL}/auth/reclutador/register`, {
+            const response = await fetch(`${API_BASE_URL}/reclutador/add`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({nombre, email, contraseña: password}),

@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 from modelos.models import db, Oferta, Reclutador
 from services.Security import Security
-from services.decorador import token_required
+from services.decorador import token_required_cookie, token_required
 
 
 oferta_bp = Blueprint('oferta', __name__)
 
 @oferta_bp.route('/all')
-@token_required
+@token_required_cookie
 def obtener_ofertar():
     ofertas = Oferta.query.all()
     return jsonify([{
@@ -18,7 +18,7 @@ def obtener_ofertar():
     } for Oferta in ofertas]) , 200
 
 @oferta_bp.route('/get/<int:id>')
-@token_required
+@token_required_cookie
 def get_by_id(id):
 
     oferta_db = Oferta.query.get_or_404(id)
@@ -31,7 +31,7 @@ def get_by_id(id):
 
 
 @oferta_bp.route('/add', methods=['POST'])
-@token_required
+@token_required_cookie
 def add_oferta():
 
     data = request.get_json()
@@ -69,7 +69,7 @@ def add_oferta():
         return jsonify( {'Error': str(e) }), 400
 
 @oferta_bp.route('/modify', methods=['PUT'])
-@token_required
+@token_required_cookie
 def modify():
     data = request.get_json()
 
@@ -109,7 +109,7 @@ def modify():
         return jsonify( {'Error': str(e) }), 400
 
 @oferta_bp.route('/delete/id', methods=['DELETE'])
-@token_required
+@token_required_cookie
 def delete_by_id():
     data = request.get_json()
     id = data.get('id')

@@ -1,5 +1,5 @@
 // Configuración de la API
-const API_BASE_URL = 'http://localhost:5000'; // Cambia esto por tu URL de API
+const API_BASE_URL = 'http://127.0.0.1:5000'; // Cambia esto por tu URL de API
 
 // Variables de estado global
 let createSubmitHandler = null;
@@ -46,7 +46,10 @@ function loadOffers() {
     document.getElementById('add-offer-form').style.display = 'none';
     
     // Hacer la petición a la API
-    fetch(`${API_BASE_URL}/oferta/all`)
+    fetch(`${API_BASE_URL}/oferta/all`, {
+  		method: 'GET',
+  		credentials: 'include'
+		})
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error en la respuesta de la red');
@@ -148,7 +151,8 @@ function setupCreateForm() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newOffer)
+            body: JSON.stringify(newOffer),
+		credentials: 'include'
         })
         .then(response => {
             if (!response.ok) throw new Error('Error al crear la oferta');

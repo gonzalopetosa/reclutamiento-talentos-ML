@@ -3,7 +3,7 @@ import datetime
 import pytz
 from dotenv import load_dotenv
 import os
-from flask import abort
+from flask import abort, request
 
 load_dotenv()
 
@@ -24,7 +24,7 @@ class Security():
         return jwt.encode(payload, cls.secret, algorithm='HS256')
 
     @classmethod
-    def validate_token(cls, headers):
+    def validate_token_header(cls, headers):
         if 'Authorization' in headers.keys():
             authorization = headers['Authorization']
 
@@ -44,6 +44,27 @@ class Security():
                     return False
         else:
             return False
+
+
+    @classmethod
+    def validate_token_cookie(cls):
+        token = request.cookies.get('token')
+
+        if not token:
+            return False
+
+        try:
+            payload = jwt.decode(token, cls.secret, algorithms=["HS256"])
+            return payload
+        except jwt.ExpiredSignatureError:
+            return False
+        except jwt.InvalidTokenError as e:
+            print(f"Error de token inválido: {e}")
+            return False
+
+
+
+
 
 
 
