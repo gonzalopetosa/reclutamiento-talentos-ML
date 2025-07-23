@@ -3,136 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión</title>
+    <title>Sistema de Gestión | TechPro</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Fondo desenfocado -->
-    <div class="blur-background"></div>
-    <div class="overlay"></div>
+    <!-- Fondo tecnológico -->
+    <div class="tech-background"></div>
     
-    <!-- Cabecera -->
-    <header>
-        <h1>Sistema de Gestión</h1>
+    <!-- Cabecera futurista -->
+    <header class="tech-header">
+        <div class="logo-container">
+            <i class="fas fa-microchip logo-icon"></i>
+            <h1 class="tech-logo">Reclutador<span>Pro</span> Manager</h1>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+                <span class="username" id="username-display"></span>
+    		<span class="user-role" id="user-role-display"></span>
+            </div>
+        </div>
     </header>
     
-    <!-- Menú de navegación -->
-    <nav>
-        <button class="nav-button" onclick="showView('welcome-view')">Inicio</button>
-        <button class="nav-button active" onclick="showOffersView()">Ofertas</button>
-        <button class="nav-button" onclick="showView('candidates-view')">Candidatos</button>
-    </nav>
-    
-    <!-- Contenedor principal -->
-    <div class="container">
-        <!-- Vista de bienvenida -->
-        <div id="welcome-view" class="view active">
-            <h2>Bienvenido al Sistema de Gestión</h2>
-            <p>Gestiona tus ofertas de empleo y candidatos de manera eficiente con esta herramienta. Selecciona una opción del menú superior para comenzar.</p>
-        </div>
+    <!-- Panel principal -->
+    <div class="tech-container">
+        <!-- Menú de navegación lateral -->
+        <nav class="tech-nav">
+            <div class="nav-item active" onclick="showOffersView()">
+                <i class="fas fa-briefcase"></i>
+                <span>Ofertas</span>
+            </div>
+            <div class="nav-item" onclick="showView('candidates-view')">
+                <i class="fas fa-users"></i>
+                <span>Candidatos</span>
+            </div>
+            <div class="nav-item" onclick="showView('analytics-view')">
+                <i class="fas fa-chart-line"></i>
+                <span>Analíticas</span>
+            </div>
+            <div class="nav-item" onclick="showView('settings-view')">
+                <i class="fas fa-cog"></i>
+                <span>Configuración</span>
+            </div>
+            <div class="nav-footer">
+                <div class="nav-item logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar sesión</span>
+                </div>
+            </div>
+        </nav>
         
-        <!-- Vista de Ofertas -->
-        <div id="offers-view" class="view">
-            <div class="view-header">
-                <h2>Gestión de Ofertas</h2>
-                <button class="btn btn-primary" onclick="showAddOfferForm()">Agregar Oferta</button>
-            </div>
-            
-            <!-- Estado de carga -->
-            <div id="offers-loading" class="loading">
-                <div class="spinner"></div>
-                <p>Cargando ofertas...</p>
-            </div>
-            
-            <!-- Mensaje de error -->
-            <div id="offers-error" class="error-message" style="display: none;">
-                Error al cargar las ofertas. Por favor, inténtalo de nuevo.
-            </div>
-            
-            <!-- Tabla de ofertas -->
-            <table id="offers-table" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Puesto</th>
-                        <th>Etiquetas</th>
-                        <th>Reclutador</th>
-                    </tr>
-                </thead>
-                <tbody id="offers-table-body">
-                    <!-- Las ofertas se cargarán aquí dinámicamente -->
-                </tbody>
-            </table>
-            
-            <!-- Formulario para agregar oferta -->
-            <div id="add-offer-form" style="display: none;">
-                <h3>Agregar Nueva Oferta</h3>
-                <form id="offer-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="offer-puesto">Puesto *</label>
-                            <input type="text" id="offer-puesto" required>
+        <!-- Contenido principal -->
+        <main class="tech-content">
+            <!-- Vista de Ofertas -->
+            <div id="offers-view" class="tech-view active">
+                <div class="view-header">
+                    <h2><i class="fas fa-briefcase"></i> Gestión de Ofertas</h2>
+                    <button class="tech-btn primary" onclick="showAddOfferForm()">
+                        <i class="fas fa-plus"></i> Nueva Oferta
+                    </button>
+                </div>
+                
+                <!-- Estado de carga -->
+                <div id="offers-loading" class="tech-loading">
+                    <div class="tech-spinner"></div>
+                    <p>Cargando ofertas...</p>
+                </div>
+                
+                <!-- Mensaje de error -->
+                <div id="offers-error" class="tech-error" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Error al cargar las ofertas. Por favor, inténtalo de nuevo.</p>
+                </div>
+                
+                <!-- Tabla de ofertas -->
+                <div class="tech-table-container">
+                    <table id="offers-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Puesto</th>
+                                <th>Etiquetas</th>
+                                <th>Reclutador</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="offers-table-body">
+                            <!-- Ejemplo de datos estáticos para diseño -->
+                            <tr>
+                                <td>
+                                    <div class="offer-title">
+                                        <i class="fas fa-laptop-code"></i>
+                                        <div>
+                                            <div>Desarrollador Full Stack</div>
+                                            <div class="offer-id">#ID-001</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="tech-tags">
+                                        <span>JavaScript</span>
+                                        <span>React</span>
+                                        <span>Node.js</span>
+                                    </div>
+                                </td>
+                                <td>María García</td>
+                                <td><span class="status-badge active">Activa</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="offer-title">
+                                        <i class="fas fa-database"></i>
+                                        <div>
+                                            <div>Administrador de Bases de Datos</div>
+                                            <div class="offer-id">#ID-002</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="tech-tags">
+                                        <span>SQL</span>
+                                        <span>NoSQL</span>
+                                        <span>Cloud</span>
+                                    </div>
+                                </td>
+                                <td>Carlos Martínez</td>
+                                <td><span class="status-badge paused">Pausada</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn delete"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Formulario para agregar oferta -->
+                <div id="add-offer-form" class="tech-form-container" style="display: none;">
+                    <h3><i class="fas fa-file-medical"></i> Agregar Nueva Oferta</h3>
+                    <form id="offer-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="offer-puesto"><i class="fas fa-heading"></i> Puesto *</label>
+                                <input type="text" id="offer-puesto" placeholder="Ej: Desarrollador Frontend" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="offer-etiquetas"><i class="fas fa-tags"></i> Etiquetas *</label>
+                                <input type="text" id="offer-etiquetas" placeholder="Separadas por comas (React, JavaScript, CSS)" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="offer-etiquetas">Etiquetas *</label>
-                            <input type="text" id="offer-etiquetas" required>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="offer-reclutador"><i class="fas fa-user-tie"></i> Reclutador *</label>
+                                <input id="offer-reclutador" required>
+                            </div>
+                        </div>                        
+                        <div class="form-actions">
+                            <button type="button" class="tech-btn secondary" onclick="cancelAddOffer()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                            <button type="submit" class="tech-btn primary">
+                                <i class="fas fa-save"></i> Guardar Oferta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Vista de Candidatos -->
+            <div id="candidates-view" class="tech-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-users"></i> Gestión de Candidatos</h2>
+                    <div class="search-container">
+                        <input type="text" placeholder="Buscar candidatos...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                
+                <div class="tech-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Candidato</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Ubicación</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="candidate-info">
+                                        <div class="candidate-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div>María García</div>
+                                            <div class="candidate-id">#CAND-001</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>maria.garcia@email.com</td>
+                                <td>612345678</td>
+                                <td>Madrid</td>
+                                <td><span class="status-badge review">En revisión</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn contact"><i class="fas fa-comment"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="candidate-info">
+                                        <div class="candidate-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <div>Carlos Martínez</div>
+                                            <div class="candidate-id">#CAND-002</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>carlos.martinez@email.com</td>
+                                <td>678901234</td>
+                                <td>Barcelona</td>
+                                <td><span class="status-badge interview">Entrevista</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                        <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn contact"><i class="fas fa-comment"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Vista de Analíticas -->
+            <div id="analytics-view" class="tech-view">
+                <div class="view-header">
+                    <h2><i class="fas fa-chart-line"></i> Analíticas</h2>
+                    <div class="time-filter">
+                        <select>
+                            <option>Últimos 7 días</option>
+                            <option>Últimos 30 días</option>
+                            <option>Últimos 90 días</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="analytics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">24</div>
+                        <div class="metric-label">Ofertas activas</div>
+                        <div class="metric-trend positive">
+                            <i class="fas fa-arrow-up"></i> 12%
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="offer-reclutador">Reclutador *</label>
-                            <input type="text" id="offer-reclutador" required>
+                    <div class="metric-card">
+                        <div class="metric-value">142</div>
+                        <div class="metric-label">Candidatos totales</div>
+                        <div class="metric-trend positive">
+                            <i class="fas fa-arrow-up"></i> 8%
                         </div>
                     </div>
-                   
                     
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" onclick="cancelAddOffer()">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Oferta</button>
+                    <div class="metric-card">
+                        <div class="metric-value">32</div>
+                        <div class="metric-label">Entrevistas programadas</div>
+                        <div class="metric-trend negative">
+                            <i class="fas fa-arrow-down"></i> 5%
+                        </div>
                     </div>
-                </form>
+                    
+                    <div class="metric-card">
+                        <div class="metric-value">87%</div>
+                        <div class="metric-label">Tasa de conversión</div>
+                        <div class="metric-trend positive">
+                            <i class="fas fa-arrow-up"></i> 3%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Progreso de contrataciones</h3>
+                        <div class="chart-legend">
+                            <span><i class="fas fa-square" style="color: #00d1ff;"></i> Candidatos</span>
+                            <span><i class="fas fa-square" style="color: #ff00c8;"></i> Contratados</span>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-bars">
+                            <div class="bar" style="height: 70%;">
+                                <div class="bar-fill" style="height: 40%;"></div>
+                            </div>
+                            <div class="bar" style="height: 85%;">
+                                <div class="bar-fill" style="height: 35%;"></div>
+                            </div>
+                            <div class="bar" style="height: 60%;">
+                                <div class="bar-fill" style="height: 30%;"></div>
+                            </div>
+                            <div class="bar" style="height: 75%;">
+                                <div class="bar-fill" style="height: 45%;"></div>
+                            </div>
+                            <div class="bar" style="height: 90%;">
+                                <div class="bar-fill" style="height: 50%;"></div>
+                            </div>
+                        </div>
+                        <div class="chart-labels">
+                            <span>Ene</span>
+                            <span>Feb</span>
+                            <span>Mar</span>
+                            <span>Abr</span>
+                            <span>May</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <!-- Vista de Candidatos -->
-        <div id="candidates-view" class="view">
-            <h2>Gestión de Candidatos</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Ubicación</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>María García</td>
-                        <td>maria.garcia@email.com</td>
-                        <td>612345678</td>
-                        <td>Madrid</td>
-                        <td>
-                            <button class="action-btn view-btn">Ver</button>
-                            <button class="action-btn edit-btn">Editar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Carlos Martínez</td>
-                        <td>carlos.martinez@email.com</td>
-                        <td>678901234</td>
-                        <td>Barcelona</td>
-                        <td>
-                            <button class="action-btn view-btn">Ver</button>
-                            <button class="action-btn edit-btn">Editar</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        </main>
     </div>
-    
+
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

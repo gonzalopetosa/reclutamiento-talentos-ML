@@ -1,33 +1,48 @@
+// app.js
 // Configuración de la API
-const API_BASE_URL = 'http://127.0.0.1:5000'; // Cambia esto por tu URL de API
+const API_BASE_URL = 'http://127.0.0.1:5000';
 
 // Variables de estado global
 let createSubmitHandler = null;
 let currentEditId = null;
 
+function getCookie(nombre) {
+    const match = document.cookie.match(new RegExp('(^| )' + nombre + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+}
+
+function completarDatosUsuario() {
+    const email = getCookie("reclutador_email") || "No disponible";
+    const rol = getCookie("reclutador_rol") || "Reclutador";
+
+    document.getElementById("username-display").textContent = email;
+    document.getElementById("user-role-display").textContent = rol;
+}
+
+document.addEventListener('DOMContentLoaded', completarDatosUsuario);
+
 // Función para mostrar vistas
 function showView(viewId) {
     // Ocultar todas las vistas
-    document.querySelectorAll('.view').forEach(view => {
+    document.querySelectorAll('.tech-view').forEach(view => {
         view.classList.remove('active');
     });
     
     // Mostrar la vista seleccionada
     document.getElementById(viewId).classList.add('active');
     
-    // Actualizar botones activos
-    document.querySelectorAll('.nav-button').forEach(button => {
-        button.classList.remove('active');
+    // Actualizar elementos activos en el menú
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
     });
     
-    // Marcar el botón correspondiente como activo
-    const buttons = document.querySelectorAll('.nav-button');
+    // Actualizar botón activo basado en la vista
     if (viewId === 'offers-view') {
-        buttons[1].classList.add('active');
+        document.querySelectorAll('.nav-item')[0].classList.add('active');
     } else if (viewId === 'candidates-view') {
-        buttons[2].classlist.add('active');
-    } else {
-        buttons[0].classList.add('active');
+        document.querySelectorAll('.nav-item')[1].classList.add('active');
+    } else if (viewId === 'analytics-view') {
+        document.querySelectorAll('.nav-item')[2].classList.add('active');
     }
 }
 
@@ -40,44 +55,44 @@ function showOffersView() {
 // Función para cargar ofertas desde la API
 function loadOffers() {
     // Mostrar estado de carga
-    document.getElementById('offers-loading').style.display = 'block';
+    document.getElementById('offers-loading').style.display = 'flex';
     document.getElementById('offers-table').style.display = 'none';
     document.getElementById('offers-error').style.display = 'none';
     document.getElementById('add-offer-form').style.display = 'none';
     
     // Hacer la petición a la API
     fetch(`${API_BASE_URL}/oferta/all`, {
-  		method: 'GET',
-  		credentials: 'include'
-		})
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta de la red');
-            }
-            return response.json();
-        })
-        .then(offers => {
-            // Ocultar estado de carga
-            document.getElementById('offers-loading').style.display = 'none';
-            
-            // Verificar si hay ofertas
-            if (offers && offers.length > 0) {
-                renderOffersTable(offers);
-            } else {
-                // Mostrar mensaje si no hay ofertas
-                document.getElementById('offers-table-body').innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align: center;">No hay ofertas disponibles</td>
-                    </tr>
-                `;
-                document.getElementById('offers-table').style.display = 'table';
-            }
-        })
-        .catch(error => {
-            console.error('Error al cargar las ofertas:', error);
-            document.getElementById('offers-loading').style.display = 'none';
-            document.getElementById('offers-error').style.display = 'block';
-        });
+        method: 'GET',
+        credentials: 'include'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la red');
+        }
+        return response.json();
+    })
+    .then(offers => {
+        // Ocultar estado de carga
+        document.getElementById('offers-loading').style.display = 'none';
+        
+        // Verificar si hay ofertas
+        if (offers && offers.length > 0) {
+            renderOffersTable(offers);
+        } else {
+            // Mostrar mensaje si no hay ofertas
+            document.getElementById('offers-table-body').innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center;">No hay ofertas disponibles</td>
+                </tr>
+            `;
+            document.getElementById('offers-table').style.display = 'table';
+        }
+    })
+    .catch(error => {
+        console.error('Error al cargar las ofertas:', error);
+        document.getElementById('offers-loading').style.display = 'none';
+        document.getElementById('offers-error').style.display = 'flex';
+    });
 }
 
 // Función para renderizar la tabla de ofertas
@@ -89,13 +104,28 @@ function renderOffersTable(offers) {
     offers.forEach(offer => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${offer.puesto}</td>
-            <td>${offer.etiquetas}</td>
-            <td>${offer.reclutador}</td>
             <td>
-                <button class="action-btn view-btn" onclick="viewOffer(${offer.id})">Ver</button>
-                <button class="action-btn edit-btn" onclick="editOffer(${offer.id})">Editar</button>
-                <button class="action-btn delete-btn" onclick="deleteOffer(${offer.id})">Eliminar</button>
+                <div class="offer-title">
+                    <i class="fas fa-briefcase"></i>
+                    <div>
+                        <div>${offer.puesto}</div>
+                        <div class="offer-id">#ID-${offer.id}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="tech-tags">
+                    ${offer.etiquetas.split(',').map(tag => `<span>${tag.trim()}</span>`).join('')}
+                </div>
+            </td>
+            <td>${offer.reclutador}</td>
+            <td><span class="status-badge active">Activa</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn view" onclick="viewOffer(${offer.id})"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn edit" onclick="editOffer(${offer.id})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn delete" onclick="deleteOffer(${offer.id})"><i class="fas fa-trash"></i></button>
+                </div>
             </td>
         `;
         tableBody.appendChild(row);
@@ -114,7 +144,7 @@ function showAddOfferForm() {
     // Restablecer textos si estamos en modo creación
     if (!currentEditId) {
         document.querySelector('#add-offer-form h3').textContent = 'Agregar Nueva Oferta';
-        document.querySelector('#offer-form button[type="submit"]').textContent = 'Guardar Oferta';
+        document.querySelector('#offer-form button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Guardar Oferta';
     }
 }
 
@@ -152,7 +182,7 @@ function setupCreateForm() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newOffer),
-		credentials: 'include'
+            credentials: 'include'
         })
         .then(response => {
             if (!response.ok) throw new Error('Error al crear la oferta');
@@ -186,7 +216,7 @@ function editOffer(offerId) {
             
             showAddOfferForm();
             document.querySelector('#add-offer-form h3').textContent = 'Editar Oferta';
-            document.querySelector('#offer-form button[type="submit"]').textContent = 'Actualizar Oferta';
+            document.querySelector('#offer-form button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Actualizar Oferta';
             
             const form = document.getElementById('offer-form');
             form.onsubmit = null;
@@ -209,7 +239,8 @@ function editOffer(offerId) {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(updatedOffer)
+                    body: JSON.stringify(updatedOffer),
+                    credentials: 'include'
                 })
                 .then(response => {
                     if (!response.ok) throw new Error('Error al actualizar');
@@ -241,7 +272,8 @@ function deleteOffer(offerId) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id: offerId })
+            body: JSON.stringify({ id: offerId }),
+            credentials: 'include'
         })
         .then(response => {
             if (!response.ok) {
@@ -273,8 +305,32 @@ function viewOffer(offerId) {
         });
 }
 
+// Función para cerrar sesión
+function logout() {
+    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        fetch(`${API_BASE_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/login';
+            }
+        })
+        .catch(error => {
+            console.error('Error al cerrar sesión:', error);
+        });
+    }
+}
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
     setupCreateForm(); // Configurar formulario para creación por defecto
     showOffersView();
+    
+    // Añadir efecto de iluminación a los elementos principales
+    setTimeout(() => {
+        document.querySelector('.tech-logo').classList.add('glow');
+        document.querySelector('.tech-btn.primary').classList.add('glow');
+    }, 1000);
 });
