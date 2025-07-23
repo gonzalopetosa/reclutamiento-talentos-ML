@@ -1,4 +1,4 @@
-from flask import request, Flask, jsonify, render_template, session
+from flask import request, Flask, jsonify, render_template, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 from modelos.models import db
@@ -13,7 +13,6 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('JWT_SECRET')
-
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False') == 'True'
@@ -32,8 +31,10 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    if 'token' not in session:
-        return redirect(url_for('/'))
+    token = request.cookies.get('token')
+    print(token)
+    if not token:
+        return redirect(url_for('index'))
     return render_template('index.html')
 
 if __name__== '__main__':
