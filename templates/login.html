@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Registro - Really Great Site</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <h1>Bienvenido</h1>
+            <p>Inicia sesión o regístrate para continuar</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="login">INICIAR SESIÓN</button>
+            <button class="tab-btn" data-tab="signup">REGISTRARSE</button>
+        </div>
+        
+        <div class="form-container">
+            <!-- Formulario de Login -->
+            <form id="login-form" class="tab-content active">
+                <div class="input-group">
+                    <label for="login-email">Correo Electrónico</label>
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" id="login-email" name="email" placeholder="tu@email.com" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="login-password">Contraseña</label>
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="login-password" name="contraseña" placeholder="Tu contraseña" required>
+                </div>
+                
+                <button type="submit" class="login-btn">INICIAR SESIÓN</button>
+                
+                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                
+                <div class="social-login">
+                    <div class="social-text">O inicia sesión con</div>
+                    <div class="social-icons">
+                        <div class="social-icon facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </div>
+                        <div class="social-icon google">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <div class="social-icon twitter">
+                            <i class="fab fa-twitter"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="register-link">
+                    ¿No tienes cuenta? <a href="#" class="switch-tab" data-tab="signup">Regístrate</a>
+                </div>
+            </form>
+            
+            <!-- Formulario de Registro -->
+            <form id="signup-form" class="tab-content">
+                <div class="signup-content">
+                    <div class="input-group">
+                        <label for="full-name">Nombre Completo</label>
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="full-name" name="nombre" placeholder="Tu nombre completo" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="signup-email">Correo Electrónico</label>
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="signup-email" name="email" placeholder="tu@email.com" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="signup-password">Contraseña</label>
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="signup-password" name="contraseña" placeholder="Crea una contraseña" required>
+                        <p class="password-info">Mínimo 8 caracteres, con mayúsculas, minúsculas y números</p>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="confirm-password">Confirmar Contraseña</label>
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="confirm-password" placeholder="Confirma tu contraseña" required>
+                    </div>
+                    
+                    <div class="terms">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a></label>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">CREAR CUENTA</button>
+                    
+                    <div class="register-link">
+                        ¿Ya tienes cuenta? <a href="#" class="switch-tab" data-tab="login">Inicia sesión</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script_login.js') }}"></script>
+</body>
+</html>

@@ -1,52 +1,47 @@
 from flask import Blueprint, request, jsonify
 from modelos.models import db, Oferta, Reclutador
+from services.Security import Security
+from services.decorador import token_required_cookie, token_required
+
 
 oferta_bp = Blueprint('oferta', __name__)
 
 @oferta_bp.route('/all')
+@token_required_cookie
 def obtener_ofertar():
-
     ofertas = Oferta.query.all()
-
     return jsonify([{
         'id':Oferta.id,
         'puesto':Oferta.puesto,
-        'etiquetas':Oferta.etiquetas
-    } for Oferta in ofertas])
+        'etiquetas':Oferta.etiquetas,
+        'reclutador':Oferta.id_reclutador
+    } for Oferta in ofertas]) , 200
 
-@oferta_bp.route('/get/id')
-def get_by_id():
-    data = request.get_json()
-    id_oferta = data.get('id')
+@oferta_bp.route('/get/<int:id>')
+@token_required_cookie
+def get_by_id(id):
 
-    if not id_oferta:
-        return jsonify({
-        'Error':'El campo id no fue completado'
-        }) , 400
+    oferta_db = Oferta.query.get_or_404(id)
 
-    oferta_db = Oferta.query.get(id_oferta)
-
-    if not oferta_db:
-        return jsonify({
-        'Error':'No existe oferta'
-        }) , 404
-    else:
-        return jsonify({
-            'puesto': oferta_db.puesto,
-            'etiquetas': oferta_db.etiquetas,
-            'reclurado_asociado': oferta_db.id_reclutador
-        }), 200
+    return jsonify({
+        'puesto': oferta_db.puesto,
+        'etiquetas': oferta_db.etiquetas,
+        'id_reclutador': oferta_db.id_reclutador
+    }), 200
 
 
 @oferta_bp.route('/add', methods=['POST'])
+@token_required_cookie
 def add_oferta():
 
     data = request.get_json()
     id_reclutador = data.get('id_reclutador')
+    puesto = data.get('puesto')
+    etiquetas = data.get('etiquetas')
 
-    if not id_reclutador:
+    if not id_reclutador or not puesto or not etiquetas:
         return jsonify({
-        'Error':'El campo id_reclutador no fue completado'
+        'Error':'Peticion incompleta'
         }) , 400
 
     reclutador_db = Reclutador.query.get(id_reclutador)
@@ -55,12 +50,6 @@ def add_oferta():
         return jsonify({
         'Error':'No existe reclutador'
         }) , 404
-
-    puesto = data.get('puesto')
-    etiquetas = data.get('etiquetas')
-
-    if not puesto or not etiquetas:
-        return jsonify({'Error': 'Los campos "puesto" y "etiquetas" son obligatorios'}), 400
 
     try:
         nueva_oferta = Oferta(
@@ -80,6 +69,7 @@ def add_oferta():
         return jsonify( {'Error': str(e) }), 400
 
 @oferta_bp.route('/modify', methods=['PUT'])
+@token_required_cookie
 def modify():
     data = request.get_json()
 
@@ -119,6 +109,7 @@ def modify():
         return jsonify( {'Error': str(e) }), 400
 
 @oferta_bp.route('/delete/id', methods=['DELETE'])
+@token_required_cookie
 def delete_by_id():
     data = request.get_json()
     id = data.get('id')

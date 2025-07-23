@@ -81,6 +81,7 @@ class Reclutador(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     nombre = db.Column(db.Text , nullable=False)
     email = db.Column(db.Text, nullable=False)
+    contraseña = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
         return f'<reclutador id={self.id} nombre={self.nombre}>'

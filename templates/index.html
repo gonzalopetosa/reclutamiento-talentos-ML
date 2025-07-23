@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Fondo desenfocado -->
+    <div class="blur-background"></div>
+    <div class="overlay"></div>
+    
+    <!-- Cabecera -->
+    <header>
+        <h1>Sistema de Gestión</h1>
+    </header>
+    
+    <!-- Menú de navegación -->
+    <nav>
+        <button class="nav-button" onclick="showView('welcome-view')">Inicio</button>
+        <button class="nav-button active" onclick="showOffersView()">Ofertas</button>
+        <button class="nav-button" onclick="showView('candidates-view')">Candidatos</button>
+    </nav>
+    
+    <!-- Contenedor principal -->
+    <div class="container">
+        <!-- Vista de bienvenida -->
+        <div id="welcome-view" class="view active">
+            <h2>Bienvenido al Sistema de Gestión</h2>
+            <p>Gestiona tus ofertas de empleo y candidatos de manera eficiente con esta herramienta. Selecciona una opción del menú superior para comenzar.</p>
+        </div>
+        
+        <!-- Vista de Ofertas -->
+        <div id="offers-view" class="view">
+            <div class="view-header">
+                <h2>Gestión de Ofertas</h2>
+                <button class="btn btn-primary" onclick="showAddOfferForm()">Agregar Oferta</button>
+            </div>
+            
+            <!-- Estado de carga -->
+            <div id="offers-loading" class="loading">
+                <div class="spinner"></div>
+                <p>Cargando ofertas...</p>
+            </div>
+            
+            <!-- Mensaje de error -->
+            <div id="offers-error" class="error-message" style="display: none;">
+                Error al cargar las ofertas. Por favor, inténtalo de nuevo.
+            </div>
+            
+            <!-- Tabla de ofertas -->
+            <table id="offers-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Puesto</th>
+                        <th>Etiquetas</th>
+                        <th>Reclutador</th>
+                    </tr>
+                </thead>
+                <tbody id="offers-table-body">
+                    <!-- Las ofertas se cargarán aquí dinámicamente -->
+                </tbody>
+            </table>
+            
+            <!-- Formulario para agregar oferta -->
+            <div id="add-offer-form" style="display: none;">
+                <h3>Agregar Nueva Oferta</h3>
+                <form id="offer-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offer-puesto">Puesto *</label>
+                            <input type="text" id="offer-puesto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="offer-etiquetas">Etiquetas *</label>
+                            <input type="text" id="offer-etiquetas" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="offer-reclutador">Reclutador *</label>
+                            <input type="text" id="offer-reclutador" required>
+                        </div>
+                    </div>
+                   
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="cancelAddOffer()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Oferta</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Vista de Candidatos -->
+        <div id="candidates-view" class="view">
+            <h2>Gestión de Candidatos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Ubicación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>María García</td>
+                        <td>maria.garcia@email.com</td>
+                        <td>612345678</td>
+                        <td>Madrid</td>
+                        <td>
+                            <button class="action-btn view-btn">Ver</button>
+                            <button class="action-btn edit-btn">Editar</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Carlos Martínez</td>
+                        <td>carlos.martinez@email.com</td>
+                        <td>678901234</td>
+                        <td>Barcelona</td>
+                        <td>
+                            <button class="action-btn view-btn">Ver</button>
+                            <button class="action-btn edit-btn">Editar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
